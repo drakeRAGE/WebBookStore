@@ -2,7 +2,7 @@ import { useRef, useState, useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage'
 import { app } from '../firebase';
-import {updateUserFailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice'
+import {updateUserFailure, updateUserStart, updateUserSuccess, deleteUserFailure, deleteUserStart, deleteUserSuccess } from '../redux/user/userSlice'
 
 export default function Profile() {
   const fielRef = useRef(null);
@@ -19,11 +19,11 @@ export default function Profile() {
   // console.log(fileUploadError);
   // console.log(formData);
 
-  useEffect (()=> {
-    if(file) {
+  useEffect(() => {
+    if (file) {
       handleFileUpload(file);
     }
-  }, [file])
+  }, [file]);
 
   const handleFileUpload = () => {
     const storage = getStorage(app);
@@ -33,17 +33,17 @@ export default function Profile() {
 
     uploadTask.on('state_changed', 
       (snapshot) => {
-        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         // console.log('Upload is'+ progress + '% done');
-        setFIlePercentage(progress)
+        setFIlePercentage(Math.round(progress));
     },
-    (error) => {
+    (_error) => {
       setFileUploadError(true);
     },
     ()=> {
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => 
         setFormData({...formData, avatar: downloadURL})
-      })
+      );
     }
     );
     
@@ -55,28 +55,42 @@ export default function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       dispatch(updateUserStart());
-      const res = await fetch(`/api/user/update/${currentUser._id}`,  {
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-
       const data = await res.json();
-      if(data.success === false) {
+      if (data.success === false) {
         dispatch(updateUserFailure(data.message));
         return;
       }
 
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
-      
     } catch (error) {
       dispatch(updateUserFailure(error.message));
+    }
+  };
+
+  const handleDeleteUser = async ()=> {
+    try{
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`,  {
+        method: 'DELETE',
+      });
+      const data= await res.json();
+      if(data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+    }catch(error) {
+      dispatch(deleteUserFailure(error.message));
     }
   }
 
@@ -108,7 +122,7 @@ export default function Profile() {
       </form>    
 
       <div className='flex justify-between mt-5'>
-        <span className='text-red-700 cursor-pointer'>Delete Account</span>
+        <span onClick={handleDeleteUser} className='text-red-700 cursor-pointer'>Delete Account</span>
         <span className='text-red-700 cursor-pointer'>Sign Out</span>
       </div>
 
