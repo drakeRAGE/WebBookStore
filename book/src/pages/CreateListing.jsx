@@ -1,18 +1,37 @@
 import { useState } from 'react'
 import { getDownloadURL, ref,  getStorage, uploadBytesResumable } from 'firebase/storage'
 import { app } from '../firebase'
+import {useSelector} from 'react-redux'
+import { useNavigate } from 'react-router-dom';
 export default function CreateListing() {
     const max_6 = "{max 6}";
+    const {currentUser} = useSelector(state => state.user);
+    const navigate = useNavigate();
     const [files, setFiles]= useState([]);
-
-    const[formData, setFormData] = useState(
-        {imageURLs: [],}
-    );
+    
+    const[formData, setFormData] = useState({
+        imageURLs: [],
+        name: '',
+        description: '',
+        regularPrice: 50,
+        discountPrice: 50,
+        type: 'general',
+        offer: false,
+        author: '',
+        published: true,
+        BooksQuantity : 1,
+        Pages: 50,
+        Chapters: 1,
+    });
+    
+    //bug --> imageURLs is not shown in create-listing i.e., imageURLs not showing in create of network when submit create listing form but it is showing in the insomnia 
     
     const [imageUploadError, setImageUploadError] =useState(false);
     const [uploading, setuploading] = useState(false);
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    console.log(formData)
+    // console.log(formData)
     
     const handleImageSubmit = (e) => {
         if(files.length>0 && files.length + formData.imageURLs.length<7) {
@@ -66,58 +85,148 @@ export default function CreateListing() {
 
         console.log('working')
     }
+
+    const handleChange = (e) => {
+        if(e.target.id ==='sale' || e.target.id ==='rent') {
+            setFormData({
+                ...formData,
+                type: e.target.id,
+            })
+        }
+
+        if(e.target.id === 'published' || e.target.id === 'offer') {
+            setFormData({
+                ...formData,
+                [e.target.id]: e.target.checked,
+            })
+        } 
+
+        if(e.target.type === 'number' || e.target.type === 'text' || e.target.type === 'textarea') {
+            setFormData({
+                ...formData,
+                [e.target.id]: e.target.value,
+            })
+        }
+
+    }
+
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (formData.imageURLs.length < 1)
+        return setError('You must upload at least one image');
+      if (+formData.regularPrice < +formData.discountPrice)
+        return setError('Discount price must be lower than regular price');
+      setLoading(true);
+      setError(false);
+
+      const final_formData = {
+        name: formData.name,
+        description: formData.description,
+        regularPrice: formData.regularPrice,
+        discountPrice: formData.discountPrice,
+        type: formData.type,
+        offer: formData.offer,
+        author: formData.author,
+        published: formData.published,
+        BooksQuantity : formData.BooksQuantity,
+        Pages: formData.Pages,
+        Chapters: formData.Chapters,
+        // imageURLs: formData.imageURLs,
+      }
+      const res = await fetch('/api/listing/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+
+            //1
+            // ...final_formData,
+
+            //2
+            // ...final_formData,
+            // ...formData.imageURLs,
+
+            //3
+            ...formData,
+
+            userRef: currentUser._id,
+        }),
+    });
+    const data = await res.json();
+    console.log(formData);
+    console.log(data)
+
+      setLoading(false);
+      if (data.success === false) {
+        setError(data.message);
+      }
+      navigate(`/listing/${data._id}`);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  }
   return (
     <main className='p-3 max-w-4xl mx-auto'>
         <h1 className='text-3xl font-semibold text-center my-7'>Create a Listing</h1>
 
-        <form className='flex flex-col sm:flex-row gap-4'>
+        <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
             <div className='flex flex-col gap-4 flex-1'>
-                <input type='text' className='border p-3 rounded-lg' id='name' maxLength='40' minLength='5' placeholder='Name' />
-                <input type='text' className='border p-3 rounded-lg' id='Description' required placeholder='Description' />
-                <input type='text' className='border p-3 rounded-lg' id='author' maxLength='40' required minLength='5' placeholder='Author' />
+                <input onChange={handleChange} value={formData.name} type='text' className='border p-3 rounded-lg' id='name' maxLength='40' minLength='5' placeholder='Name' />
+                <input onChange={handleChange} value={formData.description} type='text' className='border p-3 rounded-lg' id='description' required placeholder='Description' />
+                <input onChange={handleChange} value={formData.author} type='text' className='border p-3 rounded-lg' id='author' maxLength='40' required minLength='5' placeholder='Author' />
 
                 <div className='flex gap-6 flex-wrap'>
                     <div className="flex gap-2">
-                        <input type="checkbox" id='sale' className='w-5' />
+                        <input type="checkbox" id='sale' className='w-5' onChange={handleChange} checked={formData.type ==='sale'}/>
                         <span>Sell</span>
                     </div>
 
                     <div className="flex gap-2">
-                        <input type="checkbox" id='published' className='w-5' />
+                        <input type="checkbox" id='rent' className='w-5' onChange={handleChange} checked={formData.type ==='rent'}/>
+                        <span>Rent</span>
+                    </div>
+
+                    <div className="flex gap-2">
+                        <input type="checkbox" id='published' className='w-5'  onChange={handleChange} checked={formData.published}/>
                         <span>Published</span>
                     </div>
 
                     <div className="flex gap-2">
-                        <input type="checkbox" id='Offer' className='w-5' />
+                        <input type="checkbox" id='offer' className='w-5'  onChange={handleChange} checked={formData.offer}/>
                         <span>Offer</span>
                     </div>
                 </div>
 
                 <div className='flex flex-wrap gap-4'>
                     <div className='flex items-center gap-2'>
-                        <input type="number" id='No_books' min='1' max='10' required className='p-3 border border-gray-300 rounded-lg '/>
+                        <input type="number" id='BooksQuantity' min='1' max='10' required className='p-3 border border-gray-300 rounded-lg '  onChange={handleChange} value={formData.BooksQuantity}/>
                         <p>Number of Books</p>
                     </div>
 
                     <div className='flex items-center gap-2'>
-                        <input type="number" id='No_chapters' min='1' max='20' className='p-3 border border-gray-300 rounded-lg '/>
+                        <input type="number" id='Chapters' min='1' max='20' className='p-3 border border-gray-300 rounded-lg '  onChange={handleChange} value={formData.Chapters}/>
                         <p>Number of chapters</p>
                     </div>
 
                     <div className='flex items-center gap-2'>
-                        <input type="number" id='No_pages' min='50' max='2000' className='p-3 border border-gray-300 rounded-lg '/>
+                        <input type="number" id='Pages' min='50' max='2000' className='p-3 border border-gray-300 rounded-lg '  onChange={handleChange} value={formData.Pages}/>
                         <p>Number of Pages</p>
                     </div>
 
                     <div className='flex items-center gap-2'>
-                        <input type="number" id='regularPrice' min='50' max='5000' className='p-3 border border-gray-300 rounded-lg '/>
+                        <input type="number" id='regularPrice' min='50' max='50000' required className='p-3 border border-gray-300 rounded-lg '  onChange={handleChange} value={formData.regularPrice}/>
                         <p>Regular Price</p>
                     </div>
 
-                    <div className='flex items-center gap-2'>
-                        <input type="number" id='discountedPrice' min='50' max='2000' className='p-3 border border-gray-300 rounded-lg '/>
-                        <p>Discounted Price</p>
-                    </div>
+                    {formData.offer && 
+                        (<div className='flex items-center gap-2'>
+                            <input type="number" id='discountPrice' min='0' max='20000' className='p-3 border border-gray-300 rounded-lg '  onChange={handleChange} value={formData.discountPrice}/>
+                            <p>Discount Price</p>
+                        </div>)
+                    }
                 </div>
             </div>
 
@@ -139,7 +248,9 @@ export default function CreateListing() {
                         </div>
                     ))
                 }
-                <button className='p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>Create Listing</button>
+                <button disabled={loading || uploading} className='p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>{loading ? 'Creating...' : 'Create Listing'}</button>
+
+                {error && <p className='text-red-700 text-sm'>{error}</p> }
             </div>
 
 

@@ -27,6 +27,30 @@ const lisitngSchema = new mongoose.Schema(
       default: false,
       required: true,
     },
+    author: {
+      type: String,
+      required: true,
+    },
+    published: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
+    BooksQuantity: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
+    Pages: {
+      type: Number,
+      default: 0,
+      required: false,
+    },
+    Chapters: {
+      type: Number,
+      default: 0,
+      required: false,
+    },
     imageUrls: {
       type: Array,
       required: true,
