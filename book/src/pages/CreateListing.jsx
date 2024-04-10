@@ -10,7 +10,7 @@ export default function CreateListing() {
     const [files, setFiles]= useState([]);
     
     const[formData, setFormData] = useState({
-        imageURLs: [],
+        imageUrls: [],
         name: '',
         description: '',
         regularPrice: 50,
@@ -24,7 +24,7 @@ export default function CreateListing() {
         Chapters: 1,
     });
     
-    //bug --> imageURLs is not shown in create-listing i.e., imageURLs not showing in create of network when submit create listing form but it is showing in the insomnia 
+    //bug --> imageUrls is not shown in create-listing i.e., imageUrls not showing in create of network when submit create listing form but it is showing in the insomnia 
     
     const [imageUploadError, setImageUploadError] =useState(false);
     const [uploading, setuploading] = useState(false);
@@ -34,7 +34,7 @@ export default function CreateListing() {
     // console.log(formData)
     
     const handleImageSubmit = (e) => {
-        if(files.length>0 && files.length + formData.imageURLs.length<7) {
+        if(files.length>0 && files.length + formData.imageUrls.length<7) {
             setuploading(true)
             setImageUploadError(false)
             const promises = [];
@@ -42,7 +42,7 @@ export default function CreateListing() {
                 promises.push(uploadImage(files[i]));
             }
             Promise.all(promises).then((urls) => {
-                setFormData({...formData, imageURLs: formData.imageURLs.concat(urls)});
+                setFormData({...formData, imageUrls: formData.imageUrls.concat(urls)});
                 setImageUploadError(false);
                 setuploading(false)
             }).catch((error) => {
@@ -80,7 +80,7 @@ export default function CreateListing() {
     const handleRemoveImage = (index) => {
         setFormData({
             ...formData, 
-            imageURLs: formData.imageURLs.filter((_, i)=> i!==index),
+            imageUrls: formData.imageUrls.filter((_, i)=> i!==index),
         })
 
         console.log('working')
@@ -110,54 +110,87 @@ export default function CreateListing() {
 
     }
 
+//     const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     try {
+//       if (formData.imageUrls.length < 1)
+//         return setError('You must upload at least one image');
+//       if (+formData.regularPrice < +formData.discountPrice)
+//         return setError('Discount price must be lower than regular price');
+//       setLoading(true);
+//       setError(false);
+
+//       const final_formData = {
+//         name: formData.name,
+//         description: formData.description,
+//         regularPrice: formData.regularPrice,
+//         discountPrice: formData.discountPrice,
+//         type: formData.type,
+//         offer: formData.offer,
+//         author: formData.author,
+//         published: formData.published,
+//         BooksQuantity : formData.BooksQuantity,
+//         Pages: formData.Pages,
+//         Chapters: formData.Chapters,
+//         // imageUrls: formData.imageUrls,
+//       }
+
+//     //   console.log(formData.imageUrls)
+//       const res = await fetch('/api/listing/create', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+
+//             //1
+//             // ...final_formData,
+
+//             //2
+//             // ...final_formData,
+//             // ...formData.imageUrls,
+
+//             //3
+//             // ...formData,
+
+//             userRef: currentUser._id,
+//         }),
+//     });
+//     const data = await res.json();
+//     console.log(formData);
+//     console.log(data)
+
+//       setLoading(false);
+//       if (data.success === false) {
+//         setError(data.message);
+//       }
+//       navigate(`/listing/${data._id}`);
+//     } catch (error) {
+//       setError(error.message);
+//       setLoading(false);
+//     }
+//   }
+
     const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (formData.imageURLs.length < 1)
+      if (formData.imageUrls.length < 1)
         return setError('You must upload at least one image');
       if (+formData.regularPrice < +formData.discountPrice)
         return setError('Discount price must be lower than regular price');
       setLoading(true);
       setError(false);
-
-      const final_formData = {
-        name: formData.name,
-        description: formData.description,
-        regularPrice: formData.regularPrice,
-        discountPrice: formData.discountPrice,
-        type: formData.type,
-        offer: formData.offer,
-        author: formData.author,
-        published: formData.published,
-        BooksQuantity : formData.BooksQuantity,
-        Pages: formData.Pages,
-        Chapters: formData.Chapters,
-        // imageURLs: formData.imageURLs,
-      }
       const res = await fetch('/api/listing/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-
-            //1
-            // ...final_formData,
-
-            //2
-            // ...final_formData,
-            // ...formData.imageURLs,
-
-            //3
-            ...formData,
-
-            userRef: currentUser._id,
+          ...formData,
+          userRef: currentUser._id,
         }),
-    });
-    const data = await res.json();
-    console.log(formData);
-    console.log(data)
-
+      });
+      const data = await res.json();
       setLoading(false);
       if (data.success === false) {
         setError(data.message);
@@ -167,7 +200,7 @@ export default function CreateListing() {
       setError(error.message);
       setLoading(false);
     }
-  }
+  };
   return (
     <main className='p-3 max-w-4xl mx-auto'>
         <h1 className='text-3xl font-semibold text-center my-7'>Create a Listing</h1>
@@ -241,7 +274,7 @@ export default function CreateListing() {
                 </div>
                 <p className='text-red-700 tx-sm'>{imageUploadError && imageUploadError}</p>
                 {
-                    formData.imageURLs.length > 0 && formData.imageURLs.map((url, index)=> (
+                    formData.imageUrls.length > 0 && formData.imageUrls.map((url, index)=> (
                         <div key={index} className='flex justify-between item-center p-3 border'>
                             <img src={url} alt="listing image" className='w-20 h-20 object-contain rounded-lg'/>
                             <button disabled={uploading} type='button' onClick={() => handleRemoveImage(index)} className='p-3 text-red-700 rounded-lg uppercase hover:opacity-95 '>Delete</button>
