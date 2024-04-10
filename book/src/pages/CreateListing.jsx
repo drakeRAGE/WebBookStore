@@ -110,67 +110,6 @@ export default function CreateListing() {
 
     }
 
-//     const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     try {
-//       if (formData.imageUrls.length < 1)
-//         return setError('You must upload at least one image');
-//       if (+formData.regularPrice < +formData.discountPrice)
-//         return setError('Discount price must be lower than regular price');
-//       setLoading(true);
-//       setError(false);
-
-//       const final_formData = {
-//         name: formData.name,
-//         description: formData.description,
-//         regularPrice: formData.regularPrice,
-//         discountPrice: formData.discountPrice,
-//         type: formData.type,
-//         offer: formData.offer,
-//         author: formData.author,
-//         published: formData.published,
-//         BooksQuantity : formData.BooksQuantity,
-//         Pages: formData.Pages,
-//         Chapters: formData.Chapters,
-//         // imageUrls: formData.imageUrls,
-//       }
-
-//     //   console.log(formData.imageUrls)
-//       const res = await fetch('/api/listing/create', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-
-//             //1
-//             // ...final_formData,
-
-//             //2
-//             // ...final_formData,
-//             // ...formData.imageUrls,
-
-//             //3
-//             // ...formData,
-
-//             userRef: currentUser._id,
-//         }),
-//     });
-//     const data = await res.json();
-//     console.log(formData);
-//     console.log(data)
-
-//       setLoading(false);
-//       if (data.success === false) {
-//         setError(data.message);
-//       }
-//       navigate(`/listing/${data._id}`);
-//     } catch (error) {
-//       setError(error.message);
-//       setLoading(false);
-//     }
-//   }
-
     const handleSubmit = async (e) => {
     e.preventDefault();
     try {
