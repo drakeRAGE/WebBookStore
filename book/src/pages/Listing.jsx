@@ -134,7 +134,7 @@ export default function Listing() {
               </li>
             </ul>
             {currentUser && listing.userRef !== currentUser._id && !contact && (
-            <button onClick={()=> setContact(true)} className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'>Contact Landlord</button>
+            <button onClick={()=> setContact(true)} className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'>Contact author</button>
             )}
             {contact && <Contact listing={listing} />}
           </div>

@@ -173,7 +173,7 @@ export default function Profile() {
         <input type="email" placeholder='email' className='border p-3 rounded-lg' defaultValue={currentUser.email} onChange={handleChange} id='email' />
         <input type="password" placeholder='password' className='border p-3 rounded-lg' onChange={handleChange} id='password' />
 
-        <button disabled={loading} className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled-80'>{loading ? 'Loading...' : 'Update' }</button>
+        <button disabled={loading} className='bg-blue-600 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled-80'>{loading ? 'Loading...' : 'Update' }</button>
         <Link className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95' to={'/create-listing'}>Create Listing</Link>
       </form>    
 

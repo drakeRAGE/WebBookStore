@@ -64,7 +64,7 @@ export default function Home() {
           to={'/search'}
           className='text-xs sm:text-sm text-blue-800 font-bold hover:underline'
         >
-          Let's get started...
+          Let&apos;s get started...
         </Link>
       </div>
 
@@ -73,7 +73,9 @@ export default function Home() {
         {offerListings &&
           offerListings.length > 0 &&
           offerListings.map((listing) => (
-            <SwiperSlide>
+            <SwiperSlide key=''>
+              {/* <img src='https://img.freepik.com/free-vector/hand-drawn-book-club-facebook-cover-template_23-2149753870.jpg?w=1380&t=st=1712951681~exp=1712952281~hmac=25ae3964f7e9b45f6e76b4f363f297136ceb64973922b4f3187fa394c12c14c8' alt="Book Club Facebook Cover Template" /> */}
+
               <div
                 style={{
                   background: `url(${listing.imageUrls[0]}) center no-repeat`,
