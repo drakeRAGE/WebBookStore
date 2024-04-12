@@ -16,7 +16,7 @@ export default function CreateListing() {
         description: '',
         regularPrice: 50,
         discountPrice: 50,
-        type: 'general',
+        type: 'all',
         offer: false,
         author: '',
         published: true,

@@ -15,7 +15,7 @@ export default function CreateListing() {
         description: '',
         regularPrice: 50,
         discountPrice: 50,
-        type: 'general',
+        type: 'all',
         offer: false,
         author: '',
         published: true,
@@ -23,8 +23,6 @@ export default function CreateListing() {
         Pages: 50,
         Chapters: 1,
     });
-    
-    //bug --> imageUrls is not shown in create-listing i.e., imageUrls not showing in create of network when submit create listing form but it is showing in the insomnia 
     
     const [imageUploadError, setImageUploadError] =useState(false);
     const [uploading, setuploading] = useState(false);

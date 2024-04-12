@@ -79,11 +79,11 @@ export const getListings = async (req, res, next) => {
       published = { $in: [false, true] };
     }
 
-    // let type = req.query.type;
+    let type = req.query.type;
 
-    // if (type === undefined || type === 'general') {
-    //   type = { $in: ['sale', 'rent'] };
-    // }
+    if (type === undefined || type === 'all') {
+      type = { $in: ['sale', 'rent'] };
+    }
 
     const searchTerm = req.query.searchTerm || '';
 
