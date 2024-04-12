@@ -9,6 +9,8 @@ import { HiLightningBolt } from "react-icons/hi";
 import { VscDebugBreakpointData, VscAzureDevops } from "react-icons/vsc";
 import { SiAlpinelinux } from "react-icons/si";
 import { IoMan } from "react-icons/io5";
+import { useSelector } from 'react-redux';
+import Contact from '../components/Contact';
 
 export default function Listing() {
   SwiperCore.use([Navigation]);
@@ -16,6 +18,8 @@ export default function Listing() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
+  const {currentUser} = useSelector((state)=>state.user) //here we have to destructure it otherwise it will be just a user (not current user )
+  const [contact, setContact] = useState(false);
   const params = useParams();
 
   useEffect(() => {
@@ -88,7 +92,7 @@ export default function Listing() {
             </p>
             <p className='flex items-center mt-6 gap-2 text-slate-600  text-sm'>
                 <IoMan className='text-lg'/>
-              {listing.author}
+              <span className='font-bold'>Author</span> - {listing.author}
             </p>
             <div className='flex gap-4'>
               <p className='bg-red-900 w-full max-w-[200px] text-white text-center p-1 rounded-md'>
@@ -129,6 +133,10 @@ export default function Listing() {
                 {listing.published ? 'published' : 'Un-published'}
               </li>
             </ul>
+            {currentUser && listing.userRef !== currentUser._id && !contact && (
+            <button onClick={()=> setContact(true)} className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'>Contact Landlord</button>
+            )}
+            {contact && <Contact listing={listing} />}
           </div>
         </div>
       )}
