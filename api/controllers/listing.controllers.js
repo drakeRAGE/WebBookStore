@@ -1,7 +1,6 @@
 import Listing from '../models/listing.model.js';
 import { errorHandler } from '../utils/error.js';
 
-//bug -> type functionality is not working here, check below comments
 export const createListing = async (req, res, next) => {
   try {
     const listing = await Listing.create(req.body);
@@ -95,7 +94,7 @@ export const getListings = async (req, res, next) => {
       name: { $regex: searchTerm, $options: 'i' },
       offer,
       published,
-      // type,
+      type,
     })
       .sort({ [sort]: order })
       .limit(limit)
