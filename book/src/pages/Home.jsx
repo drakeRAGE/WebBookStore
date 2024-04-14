@@ -11,7 +11,7 @@ export default function Home() {
   const [saleListings, setSaleListings] = useState([]);
   const [rentListings, setRentListings] = useState([]);
   SwiperCore.use([Navigation]);
-  console.log(offerListings);
+  // console.log(offerListings);
   useEffect(() => {
     const fetchOfferListings = async () => {
       try {
@@ -74,12 +74,9 @@ export default function Home() {
           offerListings.length > 0 &&
           offerListings.map((listing) => (
             <SwiperSlide key=''>
-              {/* <img src='https://img.freepik.com/free-vector/hand-drawn-book-club-facebook-cover-template_23-2149753870.jpg?w=1380&t=st=1712951681~exp=1712952281~hmac=25ae3964f7e9b45f6e76b4f363f297136ceb64973922b4f3187fa394c12c14c8' alt="Book Club Facebook Cover Template" /> */}
-
               <div
                 style={{
                   background: `url(${listing.imageUrls[0]}) center no-repeat`,
-                  backgroundSize: 'cover',
                 }}
                 className='h-[500px]'
                 key={listing._id}
