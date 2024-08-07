@@ -7,6 +7,8 @@ Best website for buying and selling of books.
 Excitingly launching a fullstack Book Store project utilizing MERN stack technologies: ReactJS, NodeJS, MongoDB, and TailwindCSS. Features include user authentication via bcrypt.js and Firebase OAuth, Redux for state management, and a captivating image slider with Swiper. The website boasts full responsiveness for optimal user experience across devices.
 
 
+![WebBookStore](https://github.com/user-attachments/assets/039f1222-de50-4333-af9e-5f07560c8136)
+
 ## Installation
 
 Install book mern project with npm
